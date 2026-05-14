@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ClassCommand</title>
+  <style>
+    :root {
+      --navy: #0f172a;
+      --navy2: #111827;
+      --gray: #e5e7eb;
+      --light: #f8fafc;
+      --yellow: #facc15;
+      --text: #0f172a;
+      --muted: #64748b;
+      --red: #dc2626;
+      --orange: #ea580c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f1f5f9;
+      color: var(--text);
+    }
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 4px solid var(--yellow);
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .logo {
+      width: 54px; height: 54px;
+      display: grid; place-items: center;
+      position: relative;
+    }
+    .hex {
+      width: 52px; height: 45px;
+      background: transparent;
+      border-left: 4px solid var(--yellow);
+      border-right: 4px solid var(--yellow);
+      position: relative;
+    }
+    .hex:before, .hex:after {
+      content: "";
+      position: absolute;
+      width: 32px; height: 32px;
+      left: 6px;
+      border-left: 4px solid var(--yellow);
+      border-right: 4px solid var(--yellow);
+      transform: rotate(60deg);
+    }
+    .hex:before { top: -18px; }
+    .hex:after { bottom: -18px; }
+    .bee {
+      position: absolute;
+      width: 30px; height: 28px;
+      top: 13px; left: 12px;
+    }
+    .bee-body {
+      position: absolute; left: 9px; top: 8px;
+      width: 13px; height: 18px;
+      background: var(--navy);
+      border-radius: 50% 50% 45% 45%;
+      box-shadow: inset 0 -5px 0 #cbd5e1, inset 0 -10px 0 var(--navy);
+    }
+    .bee-head { position: absolute; left: 10px; top: 2px; width: 11px; height: 9px; background: var(--navy); border-radius: 50%; }
+    .wing-l, .wing-r { position: absolute; top: 7px; width: 11px; height: 17px; background: #cbd5e1; opacity: .95; border-radius: 70% 30%; }
+    .wing-l { left: 0; transform: rotate(-30deg); }
+    .wing-r { right: 0; transform: rotate(30deg); }
+    .ant1, .ant2 { position: absolute; top: 0px; width: 9px; height: 2px; background: var(--navy); }
+    .ant1 { left: 7px; transform: rotate(-35deg); }
+    .ant2 { right: 7px; transform: rotate(35deg); }
+    h1 { margin: 0; font-size: 30px; letter-spacing: -0.04em; }
+    .tagline { color: #cbd5e1; margin-top: 2px; font-size: 14px; }
+    .top-actions { display: flex; gap: 10px; }
+    button {
+      border: 0;
+      background: var(--navy);
+      color: white;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .1s, opacity .15s;
+    }
+    button:hover { transform: translateY(-1px); opacity: .92; }
+    .outline-btn { background: transparent; border: 1px solid #64748b; }
+    main { max-width: 1240px; margin: 0 auto; padding: 26px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.4fr .6fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    .panel {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 26px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(15,23,42,.06);
+    }
+    .hero h2 { font-size: 36px; line-height: 1.02; margin: 8px 0; letter-spacing: -0.04em; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .12em; font-size: 12px; font-weight: 900; color: #ca8a04; }
+    .muted { color: var(--muted); line-height: 1.55; }
+    .alert-box { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; border-radius: 18px; padding: 16px; margin-top: 16px; font-weight: 800; }
+    .profile { background: var(--navy); color: white; }
+    .profile .muted { color: #cbd5e1; }
+    .profile-row { display:flex; justify-content:space-between; border-bottom: 1px solid #334155; padding: 10px 0; font-size: 14px; }
+    .brain { margin-bottom: 18px; }
+    textarea {
+      width: 100%; min-height: 124px;
+      border-radius: 18px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      padding: 15px;
+      font-size: 15px;
+      outline: none;
+      resize: vertical;
+    }
+    textarea:focus { border-color: var(--yellow); box-shadow: 0 0 0 3px rgba(250,204,21,.25); }
+    .brain-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
+    .status { margin-top: 12px; background: #fefce8; border: 1px solid #fde68a; border-radius: 14px; padding: 12px; font-weight: 800; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+    .note {
+      border-radius: 24px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(15,23,42,.05);
+    }
+    .note-head { padding: 18px; display:flex; justify-content:space-between; gap:12px; align-items:flex-start; cursor:pointer; }
+    .note-title { margin: 0; font-size: 18px; }
+    .note-body { background: rgba(255,255,255,.55); border-top: 1px solid rgba(255,255,255,.8); padding: 18px; display:none; }
+    .note.open .note-body { display:block; }
+    .yellow { background: #fef9c3; }
+    .blue { background: #dbeafe; }
+    .green { background: #dcfce7; }
+    .purple { background: #ede9fe; }
+    .red { background: #fee2e2; }
+    .orange { background: #ffedd5; }
+    .indigo { background: #e0e7ff; }
+    .gray { background: #f8fafc; }
+    .task { background:white; border:1px solid #e2e8f0; border-radius:16px; padding:14px; margin-bottom:10px; }
+    .task-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+    .task-title { font-weight:900; margin-bottom:4px; }
+    .small { font-size: 13px; color: #64748b; }
+    .badge { display:inline-flex; border-radius:999px; padding:4px 9px; font-size:11px; font-weight:900; border:1px solid #cbd5e1; white-space:nowrap; }
+    .critical { background:#fee2e2; color:#b91c1c; border-color:#fecaca; }
+    .high { background:#ffedd5; color:#c2410c; border-color:#fed7aa; }
+    .medium { background:#fef9c3; color:#a16207; border-color:#fde68a; }
+    .normal { background:#f1f5f9; color:#334155; border-color:#cbd5e1; }
+    .class-card { background:white; border-radius:16px; padding:13px; margin-bottom:10px; border:1px solid #e2e8f0; }
+    .class-head { display:flex; justify-content:space-between; gap:10px; align-items:center; }
+    .week { display:grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap:10px; }
+    .day { background:white; min-height: 140px; border:1px solid #e2e8f0; border-radius:16px; padding:12px; }
+    .pill { background:#f1f5f9; color:#334155; padding:7px 8px; border-radius:10px; font-size:12px; margin-top:8px; }
+    .cards3 { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:12px; }
+    .cards4 { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; }
+    .mini { background:white; border:1px solid #e2e8f0; border-radius:16px; padding:14px; }
+    ul { margin: 8px 0 0; padding-left: 18px; }
+    li { margin: 5px 0; }
+    @media (max-width: 900px) { .hero, .grid, .cards3, .cards4 { grid-template-columns: 1fr; } .week { grid-template-columns: 1fr; } header { align-items:flex-start; flex-direction:column; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo" aria-label="ClassCommand bee logo">
+        <div class="hex"></div>
+        <div class="bee">
+          <div class="wing-l"></div><div class="wing-r"></div><div class="ant1"></div><div class="ant2"></div><div class="bee-head"></div><div class="bee-body"></div>
+        </div>
+      </div>
+      <div>
+        <h1>ClassCommand</h1>
+        <div class="tagline">Strict school organization. No excuses.</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button onclick="window.scrollTo({top:0, behavior:'smooth'})">Dashboard</button>
+      <button class="outline-btn" onclick="alert('Search will be added in Version 2.')">Search</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="panel">
+        <div class="eyebrow">High School Command Center</div>
+        <h2>What exactly needs to happen next?</h2>
+        <p class="muted">Brain-dump assignments, finals, weak topics, Google Classroom notes, and handouts. ClassCommand converts the mess into strict daily orders and organized cards.</p>
+        <div class="alert-box">⚠ Critical class: Algebra 2HP — math comes first until the final plan is under control.</div>
+      </div>
+      <div class="panel profile">
+        <div class="eyebrow">Student Profile</div>
+        <h2 style="font-size:26px;color:white;">Freshman • 7 Classes</h2>
+        <p class="muted">Current student setup</p>
+        <div class="profile-row"><span>Top concern</span><b style="color:#fecaca">Algebra 2HP</b></div>
+        <div class="profile-row"><span>Second concern</span><b style="color:#fed7aa">Biology P</b></div>
+        <div class="profile-row"><span>Third concern</span><b style="color:#fde68a">Spanish 1P</b></div>
+      </div>
+    </section>
+
+    <section class="panel brain">
+      <div class="eyebrow">Brain Dump</div>
+      <h2 style="font-size:24px;margin:6px 0 4px;">Dump the mess. The app sorts it.</h2>
+      <p class="muted">Type loosely. The app will sort information into classes, dates, tasks, study blocks, and missing-info warnings.</p>
+      <textarea id="brainDump">Math final is in two weeks and I am behind on logs and graphing. Biology needs genetics and cells. Spanish vocab quiz Friday. Catholicism handout has a missing due date.</textarea>
+      <div class="brain-actions">
+        <button onclick="organizeBrainDump()">✨ Organize This</button>
+        <button class="outline-btn" onclick="addHandout()" style="color:#0f172a;border-color:#cbd5e1;">Add Handout</button>
+        <button class="outline-btn" onclick="alert('Manual task form will be added next.')" style="color:#0f172a;border-color:#cbd5e1;">+ Manual Task</button>
+      </div>
+      <div class="status" id="status">Commander status: Ready. Dump the mess. I will organize it.</div>
+    </section>
+
+    <section class="grid">
+      <div class="note yellow open">
+        <div class="note-head" onclick="toggleNote(this)"><div><h3 class="note-title">Today’s Orders</h3><div class="small">Strict priority list across all classes</div></div><b>⌄</b></div>
+        <div class="note-body" id="todayTasks"></div>
+      </div>
+
+      <div class="note blue open">
+        <div class="note-head" onclick="toggleNote(this)"><div><h3 class="note-title">Period-by-Period Classes</h3><div class="small">All 7 classes in school-day order</div></div><b>⌄</b></div>
+        <div class="note-body" id="classList"></div>
+      </div>
+
+      <div class="note green open">
+        <div class="note-head" onclick="toggleNote(this)"><div><h3 class="note-title">This Week</h3><div class="small">Calendar view for assignments and study blocks</div></div><b>⌄</b></div>
+        <div class="note-body">
+          <div class="week">
+            <div class="day"><b>Mon</b><div class="pill">Math review block</div><div class="pill">English check</div></div>
+            <div class="day"><b>Tue</b><div class="pill">Biology genetics</div><div class="pill">Handout due dates</div></div>
+            <div class="day"><b>Wed</b><div class="pill">Math mixed practice</div><div class="pill">Spanish vocab</div></div>
+            <div class="day"><b>Thu</b><div class="pill">Speech check-in</div><div class="pill">Biology cells</div></div>
+            <div class="day"><b>Fri</b><div class="pill">Spanish quiz prep</div><div class="pill">Weekly catch-up</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note purple">
+        <div class="note-head" onclick="toggleNote(this)"><div><h3 class="note-title">This Month</h3><div class="small">Finals, projects, major deadlines, missing dates</div></div><b>⌄</b></div>
+        <div class="note-body">
+          <div class="cards3">
+            <div class="mini">Algebra 2HP final date needed</div>
+            <div class="mini">Biology P final date needed</div>
+            <div class="mini">Spanish 1P final date needed</div>
+            <div class="mini">English essay/project dates</div>
+            <div class="mini">Speech presentation date</div>
+            <div class="mini">Catholicism handout due date</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note red open">
+        <div class="note-head" onclick="toggleNote(this)"><div><h3 class="note-title">Finals Battle Plan</h3><div class="small">Study plan by weak topics, dates, and urgency</div></div><b>⌄</b></div>
+        <div class="note-body">
+          <div class="cards3">
+            <div class="mini"><h3>Algebra 2HP <span class="badge critical">Critical</span></h3><b>Weak topics</b><ul><li>Logarithms</li><li>Graphing</li><li>Factoring</li><li>Transformations</li></ul><b>Plan</b><ul><li>Diagnostic review</li><li>Weakest topic practice</li><li>Mixed problems</li><li>Practice test</li><li>Fix missed questions</li></ul><p class="small"><b style="color:#dc2626">Final date needed</b></p></div>
+            <div class="mini"><h3>Biology P <span class="badge high">High</span></h3><b>Weak topics</b><ul><li>Genetics</li><li>Cells</li><li>Review packet</li><li>Missed quizzes</li></ul><b>Plan</b><ul><li>Reread notes</li><li>Make flashcards</li><li>Practice questions</li><li>Review misses</li></ul><p class="small"><b style="color:#dc2626">Final date needed</b></p></div>
+            <div class="mini"><h3>Spanish 1P <span class="badge medium">Medium-High</span></h3><b>Weak topics</b><ul><li>Vocabulary</li><li>Conjugations</li><li>Listening</li><li>Speaking</li></ul><b>Plan</b><ul><li>Daily vocab</li><li>Verb drills</li><li>Quiz practice</li><li>Speaking review</li></ul><p class="small"><b style="color:#dc2626">Final date needed</b></p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note orange">
+        <div class="note-head" onclick="toggleNote(this)"><div><h3 class="note-title">Google Classroom + Handouts</h3><div class="small">Digital assignments and physical papers</div></div><b>⌄</b></div>
+        <div class="note-body">
+          <div class="cards3" style="grid-template-columns: repeat(2, minmax(0,1fr));">
+            <div class="mini"><h3>Google Classroom</h3><p class="muted">Paste assignment text or upload screenshots. Direct connection comes later.</p><button onclick="alert('Paste assignment feature comes next.')">Paste assignment</button></div>
+            <div class="mini"><h3>Physical Handout Checklist</h3><p>☐ Paper is in backpack</p><p>☐ Paper is completed</p><p>☐ Paper was turned in</p><p>☐ Due date confirmed</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note indigo">
+        <div class="note-head" onclick="toggleNote(this)"><div><h3 class="note-title">Four-Year High School Plan</h3><div class="small">Classes, summers, activities, academic goals</div></div><b>⌄</b></div>
+        <div class="note-body">
+          <div class="cards4">
+            <div class="mini"><h3>9th Grade</h3><p><b>Classes:</b> current schedule</p><p><b>Focus:</b> build study habits</p><p><b>Summer:</b> plan after freshman year</p></div>
+            <div class="mini"><h3>10th Grade</h3><p><b>Classes:</b> choose rigor carefully</p><p><b>Focus:</b> clubs/sports/service</p><p><b>Summer:</b> activity or service</p></div>
+            <div class="mini"><h3>11th Grade</h3><p><b>Classes:</b> most rigorous year</p><p><b>Focus:</b> leadership + testing</p><p><b>Summer:</b> internship/service/program</p></div>
+            <div class="mini"><h3>12th Grade</h3><p><b>Classes:</b> senior schedule</p><p><b>Focus:</b> finish requirements</p><p><b>Summer:</b> keep grades strong</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note gray">
+        <div class="note-head" onclick="toggleNote(this)"><div><h3 class="note-title">Build Roadmap</h3><div class="small">How this becomes a complete app</div></div><b>⌄</b></div>
+        <div class="note-body">
+          <div class="cards3">
+            <div class="mini"><h3>Version 1</h3><p>Dashboard, brain dump, AI organization, class cards, daily orders, finals plan, handout tracking.</p></div>
+            <div class="mini"><h3>Version 2</h3><p>Accounts, saved profiles, better calendar, reminders, image reading.</p></div>
+            <div class="mini"><h3>Version 3</h3><p>Google Classroom, Google Calendar, parent view, mobile-friendly version.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const classes = [
+      { period: 1, name: "English 9HP", priority: "Normal" },
+      { period: 2, name: "Freshman Co-Ed PE", priority: "Low/Normal" },
+      { period: 3, name: "Biology P", priority: "High" },
+      { period: 4, name: "Speech P", priority: "Normal" },
+      { period: 5, name: "Algebra 2HP", priority: "Critical" },
+      { period: 6, name: "Spanish 1P", priority: "Medium-High" },
+      { period: 7, name: "Understanding Catholicism", priority: "Normal" }
+    ];
+
+    let tasks = [
+      { id: 1, className: "Algebra 2HP", title: "Start final review: logarithms and graphing", type: "Study", due: "Today", priority: "Critical", time: "35 min", status: "Not started", reason: "Math is the biggest weakness and final prep is behind." },
+      { id: 2, className: "Biology P", title: "Review genetics and cell structure notes", type: "Study", due: "Today", priority: "High", time: "25 min", status: "Not started", reason: "Biology is the second highest concern." },
+      { id: 3, className: "Spanish 1P", title: "Study vocab and verb conjugations", type: "Study", due: "Friday", priority: "Medium-High", time: "20 min", status: "Not started", reason: "Spanish needs daily repetition." },
+      { id: 4, className: "Understanding Catholicism", title: "Find handout and confirm due date", type: "Handout", due: "Missing date", priority: "Normal", time: "5 min", status: "Missing info", reason: "A missing due date cannot stay unknown." }
+    ];
+
+    function priorityClass(p) {
+      if (p === "Critical") return "critical";
+      if (p === "High") return "high";
+      if (p === "Medium-High") return "medium";
+      return "normal";
+    }
+
+    function priorityScore(p) {
+      return { "Critical": 1, "High": 2, "Medium-High": 3, "Normal": 4, "Low/Normal": 5 }[p] || 9;
+    }
+
+    function renderTasks() {
+      const active = tasks.filter(t => t.status !== "Done").sort((a,b) => priorityScore(a.priority) - priorityScore(b.priority));
+      document.getElementById("todayTasks").innerHTML = active.slice(0,5).map(t => `
+        <div class="task">
+          <div class="task-top">
+            <div>
+              <div class="task-title">${t.title} <span class="badge ${priorityClass(t.priority)}">${t.priority}</span></div>
+              <div class="small">${t.className} • ${t.type} • Due: ${t.due}</div>
+              <div class="small">${t.reason}</div>
+            </div>
+            <div class="small">⏱ ${t.time}</div>
+          </div>
+          <div class="brain-actions"><button onclick="markDone(${t.id})">✓ Mark done</button><button class="outline-btn" style="color:#0f172a;border-color:#cbd5e1;" onclick="alert('Moved to tomorrow in the future full version.')">Move to tomorrow</button></div>
+        </div>
+      `).join("");
+
+      document.getElementById("classList").innerHTML = classes.map(c => {
+        const classTasks = tasks.filter(t => t.className === c.name && t.status !== "Done");
+        return `<div class="class-card">
+          <div class="class-head"><b>Period ${c.period}: ${c.name}</b><span class="badge ${priorityClass(c.priority)}">${c.priority}</span></div>
+          <div class="small" style="margin-top:8px;">${classTasks.length ? classTasks.map(t => `• ${t.title} (${t.due})`).join("<br>") : "• No active tasks entered yet."}</div>
+        </div>`;
+      }).join("");
+    }
+
+    function organizeBrainDump() {
+      const text = document.getElementById("brainDump").value.toLowerCase();
+      const newTasks = [];
+      const add = (className, title, priority, type, due, time, reason) => {
+        newTasks.push({ id: Date.now() + newTasks.length, className, title, priority, type, due, time, status: "Not started", reason });
+      };
+      if (text.includes("math") || text.includes("algebra") || text.includes("log") || text.includes("graph")) add("Algebra 2HP", "Math catch-up block: review weak topics", "Critical", "Study", text.includes("final") ? "Before final" : "Today", "35 min", "Math was mentioned and is marked critical.");
+      if (text.includes("bio") || text.includes("genetic") || text.includes("cell")) add("Biology P", "Biology review: weak topic practice", "High", "Study", text.includes("final") ? "Before final" : "This week", "25 min", "Biology was mentioned and is high-priority.");
+      if (text.includes("spanish") || text.includes("vocab") || text.includes("verb")) add("Spanish 1P", "Spanish review: vocab and conjugations", "Medium-High", "Study", text.includes("friday") ? "Friday" : "This week", "20 min", "Spanish needs repeated practice.");
+      if (text.includes("english") || text.includes("essay") || text.includes("reading")) add("English 9HP", "English assignment from brain dump", "Normal", text.includes("essay") ? "Essay" : "Homework", text.includes("monday") ? "Monday" : "Needs date", "30 min", "Created from brain dump.");
+      if (text.includes("speech") || text.includes("presentation")) add("Speech P", "Speech/presentation task", "Normal", "Presentation", "Needs date", "25 min", "Created from brain dump.");
+      if (text.includes("catholic") || text.includes("handout") || text.includes("packet")) add("Understanding Catholicism", "Physical handout: confirm due date and location", "Normal", "Handout", "Missing date", "5 min", "Physical handouts need backpack and turn-in tracking.");
+      if (text.includes("pe") || text.includes("fitness")) add("Freshman Co-Ed PE", "PE requirement or fitness log", "Low/Normal", "Requirement", "Needs date", "10 min", "Created from brain dump.");
+      if (newTasks.length === 0 && text.trim()) add("Algebra 2HP", "Unsorted task: clarify class and due date", "Critical", "Clarify", "Missing date", "10 min", "The app needs more detail.");
+      tasks = [...newTasks, ...tasks];
+      document.getElementById("status").textContent = `Commander status: Organized ${newTasks.length} new item${newTasks.length === 1 ? "" : "s"}. Math remains first unless completed.`;
+      renderTasks();
+    }
+
+    function addHandout() {
+      tasks.unshift({ id: Date.now(), className: "Understanding Catholicism", title: "New physical handout: confirm due date", type: "Handout", due: "Missing date", priority: "Normal", time: "5 min", status: "Missing info", reason: "Handout was manually added." });
+      document.getElementById("status").textContent = "Commander status: Handout added. Confirm due date and backpack status.";
+      renderTasks();
+    }
+
+    function markDone(id) {
+      tasks = tasks.map(t => t.id === id ? {...t, status: "Done"} : t);
+      document.getElementById("status").textContent = "Commander status: Task marked done. Keep moving. Do not reorganize instead of working.";
+      renderTasks();
+    }
+
+    function toggleNote(head) {
+      head.parentElement.classList.toggle("open");
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
